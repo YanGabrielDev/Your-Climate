@@ -1,7 +1,7 @@
 import axios from 'axios';
 import './App.css';
 import React, {useState, useEffect, Fragment }from 'react';
-import sun from "./assets/icons/sun.svg"
+import Header from './components/Header';
 
 
 function App() {
@@ -29,28 +29,38 @@ function App() {
       setLocation(true)
     })
   }, [])
-  console.log(weather)
 
-  return (
-    <div className="App">
-     <header className='header'><h1 className='header_text'>Seu clima agora<img src={sun}/></h1></header>
-     
-      
-        {weather &&
-      <ul>
-     <h1 className='climate'>Clima atual: {weather.weather["0"].description}</h1>
-     <li className='description'> temperatura atual: <h3>{Number(weather.main.temp).toFixed()}°</h3></li>
-     <li className='description'> temperatura maxima; <h3>{Number(weather.main.temp_max).toFixed()}°</h3></li>
-     <li className='description'> temperatura minima: <h3>{Number(weather.main.temp_min).toFixed()}°</h3> </li> 
-     <li className='description'> pressão: <h3>{weather.main.pressure} hpa</h3> </li>
-     <li className='description'>humidade: <h3> {weather.main.humidity}%</h3></li>
-     </ul>
-       }
+  if(location == false){
+    return(
+<h1> Você precisa ativar a permissão de localização!</h1>
+    )
+  } else{
+    return (
+      <div className="App">
+       <Header/>
+        
+          {weather &&
+        <ul>
+       <h1 className='climate'>Clima atual: {weather.weather["0"].description}</h1>
+       <li className='description'> temperatura atual: <h3>{Number(weather.main.temp).toFixed()}°</h3></li>
+       <li className='description'> temperatura maxima; <h3>{Number(weather.main.temp_max).toFixed()}°</h3></li>
+       <li className='description'> temperatura minima: <h3>{Number(weather.main.temp_min).toFixed()}°</h3> </li> 
+       <li className='description'> pressão: <h3>{weather.main.pressure} hpa</h3> </li>
+       <li className='description'>humidade: <h3> {weather.main.humidity}%</h3></li>
+       </ul>
+         }
+  
+   
+      </div>
+       
+    );
+  }
+  
+
+
+
+  }
+
 
  
-    </div>
-     
-  );
-}
-
 export default App;
