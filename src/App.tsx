@@ -60,9 +60,14 @@ function App() {
           <ul>
             <h1 className="climate">
               Clima atual:{" "}
-              {weather.weather["0"].description !== "céu limpo"
-                ? weather.weather["0"].description
-                : weather.weather["0"].description && <FilterDrama />}
+              {weather.weather["0"].description !== "céu limpo" ? (
+                weather.weather["0"].description
+              ) : (
+                <div>
+                  asdasdasd
+                  <FilterDrama />
+                </div>
+              )}
             </h1>
             <li className="description">
               {" "}
