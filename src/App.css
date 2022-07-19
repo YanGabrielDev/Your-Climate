@@ -18,7 +18,9 @@ body{
 }
 .climate{
   font-family: 'Raleway';
-
+}
+ul li {
+  list-style: none;
 }
 .App-logo {
   height: 40vmin;
