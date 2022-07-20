@@ -89,9 +89,11 @@ function App() {
       );
     else if (weather?.weather["0"].description == "nuvens quebradas")
       setResult(
-        <>
-          {weather.weather["0"].description} <CloudOff />
-        </>
+        weather.weather["0"].description && (
+          <>
+            {weather.weather["0"].description} <CloudOff />
+          </>
+        )
       );
   };
   useEffect(() => {
