@@ -60,7 +60,12 @@ ul li {
     transform: rotate(360deg);
   }
 }
-/* .result{
+.result{
   margin-left: 10px;
   display: flex;
-} */
+  margin-top: 20px;
+}
+.clima{
+  display: flex;
+  justify-content: center;
+}

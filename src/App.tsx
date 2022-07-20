@@ -58,19 +58,15 @@ function App() {
   const iconReturn = () => {
     if (weather?.weather["0"].description == "céu limpo")
       setResult(
-        weather.weather["0"].description && (
-          <>
-            {weather.weather["0"].description} <LightMode />
-          </>
-        )
+        <>
+          {weather.weather["0"].description} <LightMode />
+        </>
       );
     else if (weather?.weather["0"].description == "poucas nuvens")
       setResult(
-        weather.weather["0"].description && (
-          <>
-            {weather.weather["0"].description} <FilterDrama />
-          </>
-        )
+        <>
+          {weather.weather["0"].description} <FilterDrama />
+        </>
       );
     else if (weather?.weather["0"].description == "nuvens dispersas")
       setResult(
@@ -123,7 +119,7 @@ function App() {
 
         {weather && (
           <ul>
-            <div>
+            <div className="clima">
               <h1 className="climate">clima atual:</h1>
               <h1 className="result">{result}</h1>
             </div>
