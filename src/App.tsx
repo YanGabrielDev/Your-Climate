@@ -4,20 +4,13 @@ import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import api from "./services/api";
 import {
-  Brightness1,
   CloudCircle,
-  CloudDone,
   CloudDoneSharp,
   CloudOff,
-  Description,
   FilterDrama,
   LightMode,
   Thunderstorm,
 } from "@mui/icons-material";
-
-interface App {
-  FilterDrama: any;
-}
 
 interface WeatherInterface {
   main: {
@@ -36,9 +29,26 @@ interface WeatherInterface {
   }[];
 }
 
-function App() {
+const App: React.FC = () => {
   const [location, setLocation] = useState<boolean>(false);
-  const [weather, setWeather] = useState<WeatherInterface>();
+  const [weather, setWeather] = useState<WeatherInterface>({
+    main : {
+      feels_like: 0,
+      humidity: 0,
+      pressure: 0,
+      temp: 0,
+      temp_max: 0,
+      temp_min: 0
+    },
+    weather : [
+      {
+        id: 0,
+        description: "",
+        main: "",
+        icon: ""
+      }
+    ]
+  });
   const [result, setResult] = useState<any>();
 
   const getWeather = async (lat: number, long: number): Promise<any> => {
@@ -47,47 +57,55 @@ function App() {
         lat: lat,
         lon: long,
         appid: process.env.REACT_APP_OPEN_WHEATHER_KEY,
-        lang: "pt",
+        lang: "pt_br",
         units: "metric",
       },
     });
-    console.log(res.data);
 
     return res;
   };
   const iconReturn = () => {
-    if (weather?.weather["0"].description == "céu limpo")
+    if (weather.weather["0"].description == "céu limpo")
       setResult(
         <>
           {weather.weather["0"].description} <LightMode />
         </>
       );
-    else if (weather?.weather["0"].description == "poucas nuvens")
+    else if (weather.weather["0"].description == "poucas nuvens")
       setResult(
         <>
           {weather.weather["0"].description} <FilterDrama />
         </>
       );
-    else if (weather?.weather["0"].description == "nuvens dispersas")
+    else if (weather.weather["0"].description == "nuvens dispersas")
       setResult(
         <>
           {weather.weather["0"].description} <CloudDoneSharp />
         </>
       );
-    else if (weather?.weather["0"].description == "chuva de banho")
+    else if (weather.weather["0"].description == "chuva de banho")
       setResult(
         <>
           {weather.weather["0"].description} <CloudCircle />
         </>
       );
-    else if (weather?.weather["0"].description == "trovoada")
+    else if (weather.weather["0"].description == "trovoada")
       setResult(
         <>
           {weather.weather["0"].description}
           <Thunderstorm />
         </>
       );
-    else if (weather?.weather["0"].description == "nuvens quebradas")
+      else if (weather.weather["0"].description === "nublado") {
+        setResult(
+          <>
+            {weather.weather["0"].description}
+            <Thunderstorm />
+          </>
+        );
+      }
+    
+    else
       setResult(
         weather.weather["0"].description && (
           <>
@@ -105,7 +123,7 @@ function App() {
     });
     iconReturn();
   }, []);
-  console.log(weather?.weather["0"].description);
+
   if (location === false) {
     return <h1> Você precisa ativar a permissão de localização!</h1>;
   } else {
@@ -145,15 +163,5 @@ function App() {
       </div>
     );
   }
-}
-{
-  /* <h1 className="climate">
-              Clima atual:{" "}
-              {weather.weather["0"].description == "sndkfgnskd" ? (
-                weather.weather["0"].description
-              ) : (
-                <FilterDrama />
-              )}
-            </h1> */
 }
 export default App;
