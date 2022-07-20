@@ -1,11 +1,21 @@
 import { AxiosResponse } from "axios";
 import "./App.css";
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import api from "./services/api";
-import { CloudDone, Description, FilterDrama } from "@mui/icons-material";
+import {
+  Brightness1,
+  CloudCircle,
+  CloudDone,
+  CloudDoneSharp,
+  CloudOff,
+  Description,
+  FilterDrama,
+  LightMode,
+  Thunderstorm,
+} from "@mui/icons-material";
 
-interface App{
+interface App {
   FilterDrama: any;
 }
 
@@ -29,7 +39,7 @@ interface WeatherInterface {
 function App() {
   const [location, setLocation] = useState<boolean>(false);
   const [weather, setWeather] = useState<WeatherInterface>();
-  const [result, setResult] = useState<any>()
+  const [result, setResult] = useState<any>();
 
   const getWeather = async (lat: number, long: number): Promise<any> => {
     const res: AxiosResponse<any> = await api({
@@ -41,15 +51,59 @@ function App() {
         units: "metric",
       },
     });
-    console.log(res.data)
+    console.log(res.data);
 
     return res;
   };
-  const iconReturn =() =>{
-    if(weather?.weather["0"].description == "céu limpo"){
-      setResult(weather.weather["0"].description && <FilterDrama/>)
-    }
-  }
+  const iconReturn = () => {
+    if (weather?.weather["0"].description == "céu limpo")
+      setResult(
+        weather.weather["0"].description && (
+          <>
+            {weather.weather["0"].description} <LightMode />
+          </>
+        )
+      );
+    else if (weather?.weather["0"].description == "poucas nuvens")
+      setResult(
+        weather.weather["0"].description && (
+          <>
+            {weather.weather["0"].description} <FilterDrama />
+          </>
+        )
+      );
+    else if (weather?.weather["0"].description == "nuvens dispersas")
+      setResult(
+        <>
+          {weather.weather["0"].description} <CloudDoneSharp />
+        </>
+      );
+    else if (weather?.weather["0"].description == "chuva de banho")
+      setResult(
+        weather.weather["0"].description && (
+          <>
+            {weather.weather["0"].description} <CloudCircle />
+          </>
+        )
+      );
+    else if (weather?.weather["0"].description == "trovoada")
+      setResult(
+        weather.weather["0"].description && (
+          <>
+            {weather.weather["0"].description}
+            <Thunderstorm />
+          </>
+        )
+      );
+    else if (weather?.weather["0"].description == "nuvens quebradas")
+      setResult(
+        weather.weather["0"].description && (
+          <>
+            {weather.weather["0"].description} <CloudOff />
+          </>
+        )
+      );
+  };
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       getWeather(position.coords.latitude, position.coords.longitude)
@@ -57,6 +111,7 @@ function App() {
         .catch((error) => console.log(error));
       setLocation(true);
     });
+    iconReturn();
   }, []);
   console.log(weather?.weather["0"].description);
   if (location === false) {
@@ -68,15 +123,10 @@ function App() {
 
         {weather && (
           <ul>
-            {/* <img> {weather.weather["0"].icon}</img> */}
-            <h1 className="climate">
-              Clima atual:{" "}
-              {weather.weather["0"].description !== "céu limpo" ? 
-                <div>
-                  
-                {weather.weather["0"].description}<FilterDrama />
-              </div> : weather.weather["0"].description}
-            </h1>
+            <div>
+              <h1 className="climate">clima atual:</h1>
+              <h1 className="result">{result}</h1>
+            </div>
             <li className="description">
               {" "}
               temperatura atual: <h3>{Number(weather.main.temp).toFixed()}°</h3>
