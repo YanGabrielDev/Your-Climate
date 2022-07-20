@@ -32,24 +32,25 @@ interface WeatherInterface {
 const App: React.FC = () => {
   const [location, setLocation] = useState<boolean>(false);
   const [weather, setWeather] = useState<WeatherInterface>({
-    main : {
+    main: {
       feels_like: 0,
       humidity: 0,
       pressure: 0,
       temp: 0,
       temp_max: 0,
-      temp_min: 0
+      temp_min: 0,
     },
-    weather : [
+    weather: [
       {
         id: 0,
         description: "",
         main: "",
-        icon: ""
-      }
-    ]
+        icon: "",
+      },
+    ],
   });
-  const [result, setResult] = useState<any>();
+  const [result, setResult] = useState<null | undefined>();
+  const [city, setCity] = useState<string>();
 
   const getWeather = async (lat: number, long: number): Promise<any> => {
     const res: AxiosResponse<any> = await api({
@@ -65,54 +66,23 @@ const App: React.FC = () => {
     return res;
   };
   const iconReturn = () => {
-    if (weather.weather["0"].description == "céu limpo")
-      setResult(
-        <>
-          {weather.weather["0"].description} <LightMode />
-        </>
-      );
-    else if (weather.weather["0"].description == "poucas nuvens")
-      setResult(
-        <>
-          {weather.weather["0"].description} <FilterDrama />
-        </>
-      );
-    else if (weather.weather["0"].description == "nuvens dispersas")
-      setResult(
-        <>
-          {weather.weather["0"].description} <CloudDoneSharp />
-        </>
-      );
-    else if (weather.weather["0"].description == "chuva de banho")
-      setResult(
-        <>
-          {weather.weather["0"].description} <CloudCircle />
-        </>
-      );
-    else if (weather.weather["0"].description == "trovoada")
-      setResult(
-        <>
-          {weather.weather["0"].description}
-          <Thunderstorm />
-        </>
-      );
-      else if (weather.weather["0"].description === "nublado") {
-        setResult(
-          <>
-            {weather.weather["0"].description}
-            <Thunderstorm />
-          </>
-        );
-      }
-    
-    else
-      setResult(
-        weather.weather["0"].description && (
-          <>
-            {weather.weather["0"].description} <CloudOff />
-          </>
-        )
-      );
+    let weatherType = weather.weather["0"].description;
+    switch (weatherType) {
+      case "céu limpo":
+        return <LightMode />;
+      case "poucas nuvens":
+        return <FilterDrama />;
+      case "nublado":
+        return <CloudDoneSharp />;
+      case "chuva de banho":
+        return <CloudCircle />;
+      case "trovoada":
+        return <Thunderstorm />;
+      case "nublado":
+        return <Thunderstorm />;
+      default:
+        <></>;
+    }
   };
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -121,7 +91,6 @@ const App: React.FC = () => {
         .catch((error) => console.log(error));
       setLocation(true);
     });
-    iconReturn();
   }, []);
 
   if (location === false) {
@@ -135,7 +104,9 @@ const App: React.FC = () => {
           <ul>
             <div className="clima">
               <h1 className="climate">clima atual:</h1>
-              <h1 className="result">{result}</h1>
+              <h1 className="result">
+                {weather.weather["0"].description} {iconReturn()}
+              </h1>
             </div>
             <li className="description">
               {" "}
@@ -160,8 +131,9 @@ const App: React.FC = () => {
             </li>
           </ul>
         )}
+        <input aria-label="Busque a cidade"></input>
       </div>
     );
   }
-}
+};
 export default App;
