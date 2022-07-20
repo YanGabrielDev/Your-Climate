@@ -76,28 +76,22 @@ function App() {
       );
     else if (weather?.weather["0"].description == "chuva de banho")
       setResult(
-        weather.weather["0"].description && (
-          <>
-            {weather.weather["0"].description} <CloudCircle />
-          </>
-        )
+        <>
+          {weather.weather["0"].description} <CloudCircle />
+        </>
       );
     else if (weather?.weather["0"].description == "trovoada")
       setResult(
-        weather.weather["0"].description && (
-          <>
-            {weather.weather["0"].description}
-            <Thunderstorm />
-          </>
-        )
+        <>
+          {weather.weather["0"].description}
+          <Thunderstorm />
+        </>
       );
     else if (weather?.weather["0"].description == "nuvens quebradas")
       setResult(
-        weather.weather["0"].description && (
-          <>
-            {weather.weather["0"].description} <CloudOff />
-          </>
-        )
+        <>
+          {weather.weather["0"].description} <CloudOff />
+        </>
       );
   };
   useEffect(() => {
