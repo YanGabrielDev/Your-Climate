@@ -1,10 +1,13 @@
 import { AxiosResponse } from "axios";
 import "./App.css";
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect} from "react";
 import Header from "./components/Header";
 import api from "./services/api";
-import { SvgIconProps } from "@mui/material";
 import { CloudDone, Description, FilterDrama } from "@mui/icons-material";
+
+interface App{
+  FilterDrama: any;
+}
 
 interface WeatherInterface {
   main: {
@@ -26,6 +29,7 @@ interface WeatherInterface {
 function App() {
   const [location, setLocation] = useState<boolean>(false);
   const [weather, setWeather] = useState<WeatherInterface>();
+  const [result, setResult] = useState<any>()
 
   const getWeather = async (lat: number, long: number): Promise<any> => {
     const res: AxiosResponse<any> = await api({
@@ -37,9 +41,15 @@ function App() {
         units: "metric",
       },
     });
+    console.log(res.data)
 
     return res;
   };
+  const iconReturn =() =>{
+    if(weather?.weather["0"].description == "céu limpo"){
+      setResult(weather.weather["0"].description && <FilterDrama/>)
+    }
+  }
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       getWeather(position.coords.latitude, position.coords.longitude)
@@ -58,16 +68,14 @@ function App() {
 
         {weather && (
           <ul>
+            {/* <img> {weather.weather["0"].icon}</img> */}
             <h1 className="climate">
               Clima atual:{" "}
-              {weather.weather["0"].description !== "céu limpo" ? (
-                weather.weather["0"].description
-              ) : (
+              {weather.weather["0"].description !== "céu limpo" ? 
                 <div>
-                  asdasdasd
-                  <FilterDrama />
-                </div>
-              )}
+                  
+                {weather.weather["0"].description}<FilterDrama />
+              </div> : weather.weather["0"].description}
             </h1>
             <li className="description">
               {" "}
