@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
-// import api from "./services/api";
+import api from "./services/api";
 import {
   CloudCircle,
   CloudDoneSharp,
@@ -13,6 +13,7 @@ import {
 } from "@mui/icons-material";
 
 interface WeatherInterface {
+  name: string;
   main: {
     feels_like: number;
     humidity: number;
@@ -29,10 +30,10 @@ interface WeatherInterface {
   }[];
 }
 
-
 const App: React.FC = () => {
   const [location, setLocation] = useState<boolean>(false);
   const [weather, setWeather] = useState<WeatherInterface>({
+    name: "",
     main: {
       feels_like: 0,
       humidity: 0,
@@ -51,10 +52,10 @@ const App: React.FC = () => {
     ],
   });
   const [result, setResult] = useState<null | undefined>();
-  const [cityName, setCityName] = useState();
+  const [cityName, setCityName] = useState<string>("");
 
-  const getWeather = async (lat:Number | MouseEvent, long:Number | MouseEvent ): Promise<any> => {
-    const res: AxiosResponse<any> = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Buenos Aires` , {
+  const getWeather = async (lat: Number, long: Number): Promise<any> => {
+    const res: AxiosResponse<any> = await api({
       params: {
         lat: lat,
         lon: long,
@@ -65,6 +66,23 @@ const App: React.FC = () => {
     });
 
     return res;
+  };
+
+  const getByName = async (cityname: string): Promise<any> => {
+    const resName: AxiosResponse<any> = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${process.env.REACT_APP_OPEN_WHEATHER_KEY}`,
+      {
+        params: {
+          lang: "pt_br",
+          units: "metric",
+        },
+      }
+    );
+
+    console.log(resName.data);
+    setWeather(resName.data);
+
+    return resName;
   };
   const iconReturn = () => {
     let weatherType = weather.weather["0"].description;
@@ -87,10 +105,8 @@ const App: React.FC = () => {
   };
 
   const cityChange = (e) => {
-    setCityName(e.target.value)
-  }
-  
-  
+    setCityName(e.target.value);
+  };
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -100,14 +116,13 @@ const App: React.FC = () => {
       setLocation(true);
     });
   }, []);
-console.log(getWeather)
+
   if (location === false) {
     return <h1> Você precisa ativar a permissão de localização!</h1>;
   } else {
     return (
       <div className="App">
         <Header />
-
         {weather && (
           <ul>
             <div className="clima">
@@ -116,9 +131,15 @@ console.log(getWeather)
                 {weather.weather["0"].description} {iconReturn()}
               </h1>
             </div>
+            <h1 className="climate">{weather.name}</h1>
             <li className="description">
               {" "}
               temperatura atual: <h3>{Number(weather.main.temp).toFixed()}°</h3>
+            </li>{" "}
+            <li className="description">
+              {" "}
+              Sensação termica:{" "}
+              <h3>{Number(weather.main.feels_like).toFixed()}°</h3>
             </li>
             <li className="description">
               {" "}
@@ -139,7 +160,8 @@ console.log(getWeather)
             </li>
           </ul>
         )}
-        <input onChange={cityChange} value={cityName} ></input> <button onClick={getWeather}>Pesquisar</button>
+        <input onChange={cityChange} value={cityName}></input>{" "}
+        <button onClick={() => getByName(cityName)}>Pesquisar</button>
       </div>
     );
   }
