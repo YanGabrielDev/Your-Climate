@@ -68,7 +68,8 @@ const App: React.FC = () => {
     return res;
   };
 
-  const getByName = async (cityname: string): Promise<any> => {
+  const getByName = async (event, cityname: string): Promise<any> => {
+    event.preventDefault();
     const resName: AxiosResponse<any> = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${process.env.REACT_APP_OPEN_WHEATHER_KEY}`,
       {
@@ -126,7 +127,7 @@ const App: React.FC = () => {
         {weather && (
           <ul>
             <div className="clima">
-              <h1 className="climate">clima atual:</h1>
+              <h1 className="climate">Clima atual:</h1>
               <h1 className="result">
                 {weather.weather["0"].description} {iconReturn()}
               </h1>
@@ -134,7 +135,7 @@ const App: React.FC = () => {
             <h1 className="climate">{weather.name}</h1>
             <li className="description">
               {" "}
-              temperatura atual: <h3>{Number(weather.main.temp).toFixed()}°</h3>
+              Temperatura atual: <h3>{Number(weather.main.temp).toFixed()}°</h3>
             </li>{" "}
             <li className="description">
               {" "}
@@ -143,25 +144,27 @@ const App: React.FC = () => {
             </li>
             <li className="description">
               {" "}
-              temperatura maxima:{" "}
+              Temperatura maxima:{" "}
               <h3>{Number(weather.main.temp_max).toFixed()}°</h3>
             </li>
             <li className="description">
               {" "}
-              temperatura minima:{" "}
+              Temperatura minima:{" "}
               <h3>{Number(weather.main.temp_min).toFixed()}°</h3>{" "}
             </li>
             <li className="description">
               {" "}
-              pressão: <h3>{weather.main.pressure} hpa</h3>{" "}
+              Pressão: <h3>{weather.main.pressure} hpa</h3>{" "}
             </li>
             <li className="description">
-              humidade: <h3> {weather.main.humidity}%</h3>
+              Humidade: <h3> {weather.main.humidity}%</h3>
             </li>
           </ul>
         )}
-        <input onChange={cityChange} value={cityName}></input>{" "}
-        <button onClick={() => getByName(cityName)}>Pesquisar</button>
+        <form onSubmit={(e) => getByName(e, cityName)}>
+          <input onChange={cityChange} value={cityName}></input>{" "}
+          <button>Pesquisar</button>
+        </form>
       </div>
     );
   }
