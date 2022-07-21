@@ -54,6 +54,17 @@ const App: React.FC = () => {
   const [result, setResult] = useState<null | undefined>();
   const [cityName, setCityName] = useState<string>("");
 
+  const getImageIcon = (iconName: string) => {
+    return (
+      <img
+        src={`http://openweathermap.org/img/wn/${iconName}@2x.png`}
+        // width="100px"
+        // height="100px"
+        alt=""
+      />
+    );
+  };
+
   const getWeather = async (lat: Number, long: Number): Promise<any> => {
     const res: AxiosResponse<any> = await api({
       params: {
@@ -123,13 +134,13 @@ const App: React.FC = () => {
   } else {
     return (
       <div className="App">
-        <Header />
+        {/* <Header /> */}
         {weather && (
           <ul>
             <div className="clima">
               <h1 className="climate">Clima atual:</h1>
               <h1 className="result">
-                {weather.weather["0"].description} {iconReturn()}
+                {getImageIcon(weather.weather["0"].icon)}
               </h1>
             </div>
             <h1 className="climate">{weather.name}</h1>
@@ -161,6 +172,7 @@ const App: React.FC = () => {
             </li>
           </ul>
         )}
+        {getImageIcon(weather.weather["0"].icon)}
         <form onSubmit={(e) => getByName(e, cityName)}>
           <input onChange={cityChange} value={cityName}></input>{" "}
           <button>Pesquisar</button>
