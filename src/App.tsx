@@ -1,8 +1,8 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
-import api from "./services/api";
+// import api from "./services/api";
 import {
   CloudCircle,
   CloudDoneSharp,
@@ -29,6 +29,7 @@ interface WeatherInterface {
   }[];
 }
 
+
 const App: React.FC = () => {
   const [location, setLocation] = useState<boolean>(false);
   const [weather, setWeather] = useState<WeatherInterface>({
@@ -50,10 +51,10 @@ const App: React.FC = () => {
     ],
   });
   const [result, setResult] = useState<null | undefined>();
-  const [city, setCity] = useState<string>();
+  const [cityName, setCityName] = useState();
 
-  const getWeather = async (lat: number, long: number): Promise<any> => {
-    const res: AxiosResponse<any> = await api({
+  const getWeather = async (lat:Number | MouseEvent, long:Number | MouseEvent ): Promise<any> => {
+    const res: AxiosResponse<any> = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Buenos Aires` , {
       params: {
         lat: lat,
         lon: long,
@@ -84,6 +85,13 @@ const App: React.FC = () => {
         <></>;
     }
   };
+
+  const cityChange = (e) => {
+    setCityName(e.target.value)
+  }
+  
+  
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       getWeather(position.coords.latitude, position.coords.longitude)
@@ -92,7 +100,7 @@ const App: React.FC = () => {
       setLocation(true);
     });
   }, []);
-
+console.log(getWeather)
   if (location === false) {
     return <h1> Você precisa ativar a permissão de localização!</h1>;
   } else {
@@ -131,7 +139,7 @@ const App: React.FC = () => {
             </li>
           </ul>
         )}
-        <input aria-label="Busque a cidade"></input>
+        <input onChange={cityChange} value={cityName} ></input> <button onClick={getWeather}>Pesquisar</button>
       </div>
     );
   }
