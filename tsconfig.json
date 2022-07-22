@@ -1,13 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Create React App",
-  
-
 
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
-    "target": "es5",
+    "target": "es6",
     "noImplicitAny": false,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,

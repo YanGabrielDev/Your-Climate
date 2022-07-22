@@ -120,6 +120,13 @@ const App: React.FC = () => {
     return res;
   };
 
+  const formatTimestamp = (timestamp: number): string => {
+    const formattedTimestamp = new Date(timestamp * 1000);
+    return formattedTimestamp.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+    });
+  };
   const getByName = async (event, cityname: string): Promise<any> => {
     event.preventDefault();
     const resName: AxiosResponse<any> = await axios.get(
@@ -137,6 +144,11 @@ const App: React.FC = () => {
 
     return resName;
   };
+
+  function uniqueValues(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+
   const getByNext = async (event, cityname: string) => {
     event.preventDefault();
     const resNameNext: AxiosResponse<any> = await axios.get(
@@ -150,18 +162,20 @@ const App: React.FC = () => {
     );
 
     const list: Array<any> = resNameNext.data.list;
-    console.log(list);
-    // const listFormatted: Array<any> = list.map((value: any, index: number) => {
-    //   return {
-    //     dt_txt: value.dt_txt,
-    //     temp: value.main.temp,
-    //     icon: value.weather[index].icon,
-    //   };
-    // });
+    const listFormatted: Array<any> = list.map((value: any, index: number) => {
+      return {
+        dt_txt: formatTimestamp(value.dt),
+        temp: value?.main.temp,
+        icon: value.weather[index]?.icon,
+      };
+    });
 
-    // setWeatherDays(listFormatted);
+    const uniqueObjects = [...new Set(listFormatted.map((obj) => obj.dt_txt))];
+    console.log(uniqueObjects); // ["Matheus", "Pedro", "Marcos"]
+    // console.log(unique);
 
-    // return resNameNext;
+    // console.log(listFormatted);
+    return resNameNext;
   };
 
   // console.log(weatherDays);
@@ -248,7 +262,6 @@ const App: React.FC = () => {
             </Grid>
           </Grid>
         </Grid>
-        {/* <Header /> */}
         {weather && (
           <ul>
             <div className="clima">
