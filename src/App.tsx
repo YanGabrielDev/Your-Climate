@@ -1,19 +1,26 @@
 import axios, { AxiosResponse } from "axios";
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactComponentElement } from "react";
 import Header from "./components/Header";
 import api from "./services/api";
+import moment from "moment";
+import { Grid } from "@mui/material";
 import {
   CloudCircle,
   CloudDoneSharp,
   CloudOff,
+  Description,
   FilterDrama,
   LightMode,
   Thunderstorm,
 } from "@mui/icons-material";
+interface IconInterfaze {
+
+}
 
 interface WeatherInterface {
   name: string;
+  dt: number;
   main: {
     feels_like: number;
     humidity: number;
@@ -34,6 +41,8 @@ const App: React.FC = () => {
   const [location, setLocation] = useState<boolean>(false);
   const [weather, setWeather] = useState<WeatherInterface>({
     name: "",
+    dt: 0,
+
     main: {
       feels_like: 0,
       humidity: 0,
@@ -41,6 +50,7 @@ const App: React.FC = () => {
       temp: 0,
       temp_max: 0,
       temp_min: 0,
+
     },
     weather: [
       {
@@ -48,6 +58,7 @@ const App: React.FC = () => {
         description: "",
         main: "",
         icon: "",
+
       },
     ],
   });
@@ -64,6 +75,13 @@ const App: React.FC = () => {
       />
     );
   };
+  // const data = () =>{
+  //   let timestamp = new Date(weather.dt); 
+
+  // return timestamp
+  // }
+  // console.log(new Date())
+
 
   const getWeather = async (lat: Number, long: Number): Promise<any> => {
     const res: AxiosResponse<any> = await api({
@@ -116,6 +134,7 @@ const App: React.FC = () => {
     }
   };
 
+
   const cityChange = (e) => {
     setCityName(e.target.value);
   };
@@ -134,11 +153,39 @@ const App: React.FC = () => {
   } else {
     return (
       <div className="App">
+        <Grid container>
+
+          <Grid container spacing={3}>
+
+            <Grid item lg={4} md={4} sm={4} >
+              <h1 className="cityName"><img className="locationIcon" />{weather.name}</h1>
+              <h1 className="currentTemp"> <img className="termIcon" />{Number(weather.main.temp).toFixed()}°</h1>
+              <h2 className="feelsLike">Sensação termica {Number(weather.main.feels_like).toFixed()}°</h2>
+            </Grid>
+
+            <Grid item lg={4} md={4} sm={4}>
+            <h1 className="imageIcon">
+                {getImageIcon(weather.weather["0"].icon)}
+              </h1>
+              <h2 className="currentDescrip">{weather.weather["0"].description}</h2>
+
+            </Grid>
+
+          </Grid>
+          <Grid container justifyContent="center">
+            <Grid item lg={8} md={8} sm={8}>
+              <div className="nextDays"><h1>to aqui</h1></div>
+            </Grid>
+
+          </Grid>
+
+
+        </Grid>
         {/* <Header /> */}
         {weather && (
           <ul>
             <div className="clima">
-              <h1 className="climate">Clima atual:</h1>
+              <h1 className="climate">{weather.weather["0"].description}</h1>
               <h1 className="result">
                 {getImageIcon(weather.weather["0"].icon)}
               </h1>

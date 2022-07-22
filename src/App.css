@@ -5,6 +5,8 @@
 }
 body{
  background-color: rgb(89, 211, 241);
+ /* font-family: 'Raleway'; */
+color: white;
 }
 .header{
   background-color: rgb(21,32,43);
@@ -16,8 +18,30 @@ body{
 .header_text{
   color: white;
 }
-.climate{
+.feelsLike{
+  color: white;
+  margin-top: -4rem;
+}
+.termIcon{
+  background-image: url("../src/assets/icons/term2.png");
+  background-repeat: no-repeat;
+  height: 60px;
+  width: 52px;
+}
+.currentTemp{
+  color: white;
+  font-size: 5em;
+}
+.cityName{
   font-family: 'Raleway';
+  color: white;
+  font-size: 3rem;
+}
+.locationIcon{
+  background: url('../src/assets/icons/pinRedim.png') ;
+  height: 30px;
+    width: 37px;
+    background-repeat: no-repeat;
 }
 ul li {
   list-style: none;
@@ -31,6 +55,11 @@ ul li {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+img{
+  width: auto;
+    height: 392px;
+    margin-top: -6rem;
 }
 .description{
   margin-top: 3rem;
@@ -60,12 +89,14 @@ ul li {
     transform: rotate(360deg);
   }
 }
-.result{
-  margin-left: 10px;
-  display: flex;
-  margin-top: 20px;
-}
+
 .clima{
   display: flex;
   justify-content: center;
+}
+.currentDescrip{
+  margin-top: -6.5rem;
+}
+.nextDays{
+  background-color: #80e0fa;
 }
