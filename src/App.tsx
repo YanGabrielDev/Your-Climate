@@ -3,7 +3,6 @@ import "./App.css";
 import React, { useState, useEffect, ReactComponentElement } from "react";
 import Header from "./components/Header";
 import api from "./services/api";
-import moment from "moment";
 import { Grid } from "@mui/material";
 import {
   CloudCircle,
@@ -14,13 +13,14 @@ import {
   LightMode,
   Thunderstorm,
 } from "@mui/icons-material";
-interface IconInterfaze {
-
-}
+interface IconInterfaze {}
 
 interface WeatherInterface {
   name: string;
   dt: number;
+  wind: {
+    speed: number;
+  };
   main: {
     feels_like: number;
     humidity: number;
@@ -37,11 +37,31 @@ interface WeatherInterface {
   }[];
 }
 
+interface WeatherDaysInterface {
+  list: {
+    dt_txt: string;
+    temp: number;
+    icon: string;
+  }[];
+}
+
 const App: React.FC = () => {
   const [location, setLocation] = useState<boolean>(false);
+  const [weatherDays, setWeatherDays] = useState<WeatherDaysInterface>({
+    list: [
+      {
+        dt_txt: "",
+        icon: "",
+        temp: 0,
+      },
+    ],
+  });
   const [weather, setWeather] = useState<WeatherInterface>({
     name: "",
     dt: 0,
+    wind: {
+      speed: 0,
+    },
 
     main: {
       feels_like: 0,
@@ -50,7 +70,6 @@ const App: React.FC = () => {
       temp: 0,
       temp_max: 0,
       temp_min: 0,
-
     },
     weather: [
       {
@@ -58,7 +77,6 @@ const App: React.FC = () => {
         description: "",
         main: "",
         icon: "",
-
       },
     ],
   });
@@ -75,13 +93,18 @@ const App: React.FC = () => {
       />
     );
   };
-  // const data = () =>{
-  //   let timestamp = new Date(weather.dt); 
+  const data = () => {
+    let timestamp = weather.dt * 1000;
+    let date = new Date(timestamp);
 
-  // return timestamp
-  // }
-  // console.log(new Date())
+    return date.toLocaleString("pt-BR", {
+      day: "numeric",
+      month: "2-digit",
+      weekday: "long",
+    });
+  };
 
+  // console.log(data());
 
   const getWeather = async (lat: Number, long: Number): Promise<any> => {
     const res: AxiosResponse<any> = await api({
@@ -109,11 +132,39 @@ const App: React.FC = () => {
       }
     );
 
-    console.log(resName.data);
+    // console.log(resName.data);
     setWeather(resName.data);
 
     return resName;
   };
+  const getByNext = async (event, cityname: string) => {
+    event.preventDefault();
+    const resNameNext: AxiosResponse<any> = await axios.get(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${process.env.REACT_APP_OPEN_WHEATHER_KEY}`,
+      {
+        params: {
+          lang: "pt_br",
+          units: "metric",
+        },
+      }
+    );
+
+    const list: Array<any> = resNameNext.data.list;
+    console.log(list);
+    // const listFormatted: Array<any> = list.map((value: any, index: number) => {
+    //   return {
+    //     dt_txt: value.dt_txt,
+    //     temp: value.main.temp,
+    //     icon: value.weather[index].icon,
+    //   };
+    // });
+
+    // setWeatherDays(listFormatted);
+
+    // return resNameNext;
+  };
+
+  // console.log(weatherDays);
   const iconReturn = () => {
     let weatherType = weather.weather["0"].description;
     switch (weatherType) {
@@ -134,7 +185,6 @@ const App: React.FC = () => {
     }
   };
 
-
   const cityChange = (e) => {
     setCityName(e.target.value);
   };
@@ -154,32 +204,49 @@ const App: React.FC = () => {
     return (
       <div className="App">
         <Grid container>
-
-          <Grid container spacing={3}>
-
-            <Grid item lg={4} md={4} sm={4} >
-              <h1 className="cityName"><img className="locationIcon" />{weather.name}</h1>
-              <h1 className="currentTemp"> <img className="termIcon" />{Number(weather.main.temp).toFixed()}°</h1>
-              <h2 className="feelsLike">Sensação termica {Number(weather.main.feels_like).toFixed()}°</h2>
+          <Grid container spacing={3} justifyContent="center">
+            <Grid item lg={3} md={6} sm={8} xs={12}>
+              <h1 className="cityName">
+                <img className="locationIcon" />
+                {weather.name}
+              </h1>
+              <h1>{data()}</h1>
+              <h1 className="currentTemp">
+                <img className="termIcon" />
+                {Number(weather.main.temp).toFixed()}°
+              </h1>
+              <h1 className="feelsLike">
+                Sensação termica {Number(weather.main.feels_like).toFixed()}°
+              </h1>
             </Grid>
 
-            <Grid item lg={4} md={4} sm={4}>
-            <h1 className="imageIcon">
+            <Grid item lg={3} md={6} sm={8} xs={12}>
+              <h1 className="imageIcon">
                 {getImageIcon(weather.weather["0"].icon)}
               </h1>
-              <h2 className="currentDescrip">{weather.weather["0"].description}</h2>
-
+              <h1 className="currentDescrip">
+                {weather.weather["0"].description}
+              </h1>
             </Grid>
 
+            <Grid item lg={3} md={6} sm={8} xs={12}>
+              <h1>
+                Temperatura maxima {Number(weather.main.temp_max).toFixed()}°
+              </h1>
+              <h1>
+                Temperatura minima {Number(weather.main.temp_min).toFixed()}°
+              </h1>
+              <h1>Pressão {weather.main.pressure} hpa</h1>
+              <h1>Umidade {weather.main.humidity}%</h1>
+            </Grid>
           </Grid>
           <Grid container justifyContent="center">
             <Grid item lg={8} md={8} sm={8}>
-              <div className="nextDays"><h1>to aqui</h1></div>
+              <div className="nextDays">
+                <h1></h1>
+              </div>
             </Grid>
-
           </Grid>
-
-
         </Grid>
         {/* <Header /> */}
         {weather && (
@@ -212,7 +279,7 @@ const App: React.FC = () => {
             </li>
             <li className="description">
               {" "}
-              Pressão: <h3>{weather.main.pressure} hpa</h3>{" "}
+              Pressão: <h3>{weather.main.pressure} hpa</h3>
             </li>
             <li className="description">
               Humidade: <h3> {weather.main.humidity}%</h3>
@@ -220,7 +287,7 @@ const App: React.FC = () => {
           </ul>
         )}
         {getImageIcon(weather.weather["0"].icon)}
-        <form onSubmit={(e) => getByName(e, cityName)}>
+        <form onSubmit={(e) => getByNext(e, cityName)}>
           <input onChange={cityChange} value={cityName}></input>{" "}
           <button>Pesquisar</button>
         </form>
