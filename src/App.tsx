@@ -11,8 +11,9 @@ import {
   Description,
   FilterDrama,
   LightMode,
-  Thunderstorm,
+  Thunderstorm, Opacity
 } from "@mui/icons-material";
+
 interface IconInterfaze {}
 
 interface WeatherInterface {
@@ -219,45 +220,48 @@ const App: React.FC = () => {
       <div className="App">
         <Grid container>
           <Grid container spacing={3} justifyContent="center">
-            <Grid item lg={3} md={6} sm={8} xs={12}>
+            <Grid item xl={3} lg={3} md={6} sm={6} xs={12}>
               <h1 className="cityName">
                 <img className="locationIcon" />
                 {weather.name}
               </h1>
-              <h1>{data()}</h1>
+              <h2>{data()}</h2>
               <h1 className="currentTemp">
                 <img className="termIcon" />
                 {Number(weather.main.temp).toFixed()}°
               </h1>
-              <h1 className="feelsLike">
+              <h2 className="feelsLike">
                 Sensação termica {Number(weather.main.feels_like).toFixed()}°
-              </h1>
+              </h2>
             </Grid>
 
-            <Grid item lg={3} md={6} sm={8} xs={12}>
-              <h1 className="imageIcon">
+            <Grid item xl={3} lg={3} md={6} sm={6} xs={12}>
+              <h2 className="imageIcon">
                 {getImageIcon(weather.weather["0"].icon)}
-              </h1>
-              <h1 className="currentDescrip">
+              </h2>
+              <h2 className="currentDescrip">
                 {weather.weather["0"].description}
-              </h1>
+              </h2>
             </Grid>
 
-            <Grid item lg={3} md={6} sm={8} xs={12}>
-              <h1>
+            <Grid item xl={3} lg={3} md={6} sm={6} xs={12}>
+              <h2>
                 Temperatura maxima {Number(weather.main.temp_max).toFixed()}°
-              </h1>
-              <h1>
+              </h2>
+              <h2>
                 Temperatura minima {Number(weather.main.temp_min).toFixed()}°
-              </h1>
-              <h1>Pressão {weather.main.pressure} hpa</h1>
-              <h1>Umidade {weather.main.humidity}%</h1>
+              </h2>
+              <h2>Pressão {weather.main.pressure} hpa</h2>
+              <div>
+
+              <h2>Umidade <Opacity/> {weather.main.humidity}%</h2>
+              </div>
             </Grid>
           </Grid>
           <Grid container justifyContent="center">
-            <Grid item lg={8} md={8} sm={8}>
+            <Grid item xl={3} lg={8} md={6} sm={6} xs={12}>
               <div className="nextDays">
-                <h1></h1>
+                <h2></h2>
               </div>
             </Grid>
           </Grid>

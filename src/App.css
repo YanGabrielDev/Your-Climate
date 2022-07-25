@@ -60,6 +60,7 @@ img{
   width: auto;
     height: 392px;
     margin-top: -6rem;
+  
 }
 .description{
   margin-top: 3rem;
@@ -96,7 +97,13 @@ img{
 }
 .currentDescrip{
   margin-top: -6.5rem;
+  display: flex;
+  justify-content: center;
 }
 .nextDays{
   background-color: #80e0fa;
+}
+.imageIcon{
+  display: flex;
+    justify-content: center;
 }
