@@ -126,6 +126,18 @@ const App: React.FC = () => {
       month: "2-digit",
     });
   };
+
+  const getFullWeekName = (weekDay: number): string => {
+    const days = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
+    const day = days[weekDay]
+    return day;
+  }
+
+  const showWeekday = (): string => {
+    const date = new Date();
+    return getFullWeekName(date.getDay())
+  }
+
   const getByName = async (event, cityname: string): Promise<any> => {
     event.preventDefault();
     const resName: AxiosResponse<any> = await axios.get(
@@ -217,6 +229,7 @@ const App: React.FC = () => {
                 <LocationOn className="locationIcon" />
                 {weather.name}
               </h1>
+              <h1>{showWeekday()}</h1>
               {/* <h2>{data()}</h2> */}
               <h1 className="currentTemp">
                 <DeviceThermostat className="termIcon" />
