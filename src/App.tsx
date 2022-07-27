@@ -5,13 +5,6 @@ import Header from "./components/Header";
 import api from "./services/api";
 import { Button, Grid, TextField } from "@mui/material";
 import {
-  CloudCircle,
-  CloudDoneSharp,
-  CloudOff,
-  Description,
-  FilterDrama,
-  LightMode,
-  Thunderstorm,
   Opacity,
   LocationOn,
   DeviceThermostat,
@@ -86,7 +79,7 @@ const App: React.FC = () => {
       },
     ],
   });
-  const [result, setResult] = useState<null | undefined>();
+  const [result, setResult] = useState<any>();
   const [cityName, setCityName] = useState<string>("");
 
   const getImageIcon = (iconName: string) => {
@@ -111,8 +104,6 @@ const App: React.FC = () => {
       weekday: "long",
     });
   };
-
-  // console.log(data());
 
   const getWeather = async (lat: Number, long: Number): Promise<any> => {
     const res: AxiosResponse<any> = await api({
@@ -147,7 +138,6 @@ const App: React.FC = () => {
       }
     );
 
-    // console.log(resName.data);
     setWeather(resName.data);
 
     return resName;
@@ -157,10 +147,9 @@ const App: React.FC = () => {
     return self.indexOf(value) === index;
   }
 
-  const getByNext = async (event, cityname: string) => {
-    event.preventDefault();
+  const getByNext = async (cityname: string) => {
     const resNameNext: AxiosResponse<any> = await axios.get(
-      `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${process.env.REACT_APP_OPEN_WHEATHER_KEY}`,
+      `https://api.openweathermap.org/data/2.5/forecast?q=${cityname}&appid=${process.env.REACT_APP_OPEN_WHEATHER_KEY}`,
       {
         params: {
           lang: "pt_br",
@@ -170,52 +159,39 @@ const App: React.FC = () => {
     );
 
     const list: Array<any> = resNameNext.data.list;
-    const listFormatted: Array<any> = list.map((value: any, index: number) => {
+
+    const dates: Array<any> = list.map((value, index) => {
+      console.log(value.weather);
       return {
         dt_txt: formatTimestamp(value.dt),
-        temp: value?.main.temp,
-        icon: value.weather[index]?.icon,
+        temp: value.main.temp,
+        icon: value.weather,
       };
     });
-
-    const uniqueObjects = [...new Set(listFormatted.map((obj) => obj.dt_txt))];
-    console.log(uniqueObjects); // ["Matheus", "Pedro", "Marcos"]
-    // console.log(unique);
-    console.log(listFormatted);
-
-    return resNameNext;
+    const unique: any = [];
+    const distinct: any = [];
+    for (let i = 0; i < dates.length; i++) {
+      if (!unique[dates[i].dt_txt]) {
+        distinct.push(dates[i]);
+        unique[dates[i].dt_txt] = 1;
+      }
+    }
+    console.log(distinct);
+    setResult(distinct);
+    setWeatherDays(distinct);
   };
-
-  // console.log(weatherDays);
-  // const iconReturn = () => {
-  //   let weatherType = weather.weather["0"].description;
-  //   switch (weatherType) {
-  //     case "céu limpo":
-  //       return <LightMode />;
-  //     case "poucas nuvens":
-  //       return <FilterDrama />;
-  //     case "nublado":
-  //       return <CloudDoneSharp />;
-  //     case "chuva de banho":
-  //       return <CloudCircle />;
-  //     case "trovoada":
-  //       return <Thunderstorm />;
-  //     case "nublado":
-  //       return <Thunderstorm />;
-  //     default:
-  //       <></>;
-  //   }
-  // };
 
   const cityChange = (e) => {
     setCityName(e.target.value);
   };
-
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
       getWeather(position.coords.latitude, position.coords.longitude)
-        .then((response) => setWeather(response.data))
-        .catch((error) => console.log(error));
+        .then((response) => {
+          setWeather(response.data);
+          getByNext(response.data.name);
+        })
+        .catch((error) => console.error(error));
       setLocation(true);
     });
   }, []);
@@ -241,7 +217,7 @@ const App: React.FC = () => {
                 <LocationOn className="locationIcon" />
                 {weather.name}
               </h1>
-              <h2>{data()}</h2>
+              {/* <h2>{data()}</h2> */}
               <h1 className="currentTemp">
                 <DeviceThermostat className="termIcon" />
                 {Number(weather.main.temp).toFixed()}°
@@ -261,9 +237,7 @@ const App: React.FC = () => {
               display="flex"
               flexDirection="column"
             >
-              <h2 className="imageIcon">
-                {getImageIcon(weather.weather["0"].icon)}
-              </h2>
+              <h1>{getImageIcon(weather.weather["0"].icon)}</h1>
               <h2 className="currentDescrip">
                 {weather.weather["0"].description}
               </h2>
@@ -295,55 +269,46 @@ const App: React.FC = () => {
             </Grid>
           </Grid>
           <Grid container justifyContent="center">
-            {/* <Grid item xl={4} lg={8} md={6} sm={12} xs={12}>
-              <div className="nextDays">
-                <h2>gdfgdfhdf</h2>
-              </div>
-            </Grid> */}
+            {result?.map((forecast) => (
+              <Grid item xl={1} lg={4} md={6} sm={12} xs={12} display="flex">
+                <div>
+                  <div className="nextDaysIcon">
+                    {getImageIcon(forecast?.icon[0].icon)}
+                  </div>
+                  <h1>{forecast.temp}</h1>
+                  <h1>{forecast.dt_txt}</h1>
+                </div>
+              </Grid>
+            ))}
           </Grid>
         </Grid>
-        {/* {weather && (
-          <ul>
-            <div className="clima">
-              <h1 className="climate">{weather.weather["0"].description}</h1>
-              <h1 className="result">
-                {getImageIcon(weather.weather["0"].icon)}
-              </h1>
-            </div>
-            <h1 className="climate">{weather.name}</h1>
-            <li className="description">
-              {" "}
-              Temperatura atual: <h3>{Number(weather.main.temp).toFixed()}°</h3>
-            </li>{" "}
-            <li className="description">
-              {" "}
-              Sensação termica:{" "}
-              <h3>{Number(weather.main.feels_like).toFixed()}°</h3>
-            </li>
-            <li className="description">
-              {" "}
-              Temperatura maxima:{" "}
-              <h3>{Number(weather.main.temp_max).toFixed()}°</h3>
-            </li>
-            <li className="description">
-              {" "}
-              Temperatura minima:{" "}
-              <h3>{Number(weather.main.temp_min).toFixed()}°</h3>{" "}
-            </li>
-            <li className="description">
-              {" "}
-              Pressão: <h3>{weather.main.pressure} hpa</h3>
-            </li>
-            <li className="description">
-              Humidade: <h3> {weather.main.humidity}%</h3>
-            </li>
-          </ul>
-        )} */}
-        {/* {getImageIcon(weather.weather["0"].icon)} */}
         <div>
-          <form onSubmit={(e) => getByNext(e, cityName)}>
-            <input onChange={cityChange} value={cityName}></input>{" "}
-            <button>Pesquisar</button>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              getByNext(cityName);
+              getByName(e, cityName);
+            }}
+          >
+            {/* <input onChange={cityChange} value={cityName}></input> */}
+            <TextField
+              onChange={cityChange}
+              value={cityName}
+              id="outlined-basic"
+              label="Cidade"
+              variant="outlined"
+            />{" "}
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                getByNext(cityName);
+                getByName(e, cityName);
+              }}
+              variant="outlined"
+            >
+              Outlined
+            </Button>
+            {/* <button>Pesquisar</button> */}
           </form>
         </div>
       </div>
