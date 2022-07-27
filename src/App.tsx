@@ -282,7 +282,7 @@ const App: React.FC = () => {
             ))}
           </Grid>
         </Grid>
-        <div>
+        <Grid container justifyContent="center">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -290,27 +290,30 @@ const App: React.FC = () => {
               getByName(e, cityName);
             }}
           >
-            {/* <input onChange={cityChange} value={cityName}></input> */}
-            <TextField
-              onChange={cityChange}
-              value={cityName}
-              id="outlined-basic"
-              label="Cidade"
-              variant="outlined"
-            />{" "}
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                getByNext(cityName);
-                getByName(e, cityName);
-              }}
-              variant="outlined"
-            >
-              Outlined
-            </Button>
+            <Grid item spacing={2}>
+              <TextField
+                onChange={cityChange}
+                value={cityName}
+                id="outlined-basic"
+                label="Cidade"
+                variant="outlined"
+              />{" "}
+            </Grid>
+            <Grid item spacing={2} margin={2}>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  getByNext(cityName);
+                  getByName(e, cityName);
+                }}
+                variant="outlined"
+              >
+                Buscar
+              </Button>
+            </Grid>
             {/* <button>Pesquisar</button> */}
           </form>
-        </div>
+        </Grid>
       </div>
     );
   }
