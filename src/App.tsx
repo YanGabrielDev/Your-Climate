@@ -12,8 +12,6 @@ import {
   ArrowDownward,
 } from "@mui/icons-material";
 
-interface IconInterfaze {}
-
 interface WeatherInterface {
   name: string;
   dt: number;
