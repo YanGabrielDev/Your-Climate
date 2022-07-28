@@ -217,8 +217,8 @@ const App: React.FC = () => {
               item
               xl={4}
               lg={4}
-              md={6}
-              sm={12}
+              md={4}
+              sm={4}
               xs={12}
               display="flex"
               flexDirection="column"
@@ -242,8 +242,8 @@ const App: React.FC = () => {
               item
               xl={4}
               lg={4}
-              md={6}
-              sm={12}
+              md={4}
+              sm={4}
               xs={12}
               display="flex"
               flexDirection="column"
@@ -258,8 +258,8 @@ const App: React.FC = () => {
               item
               xl={4}
               lg={4}
-              md={6}
-              sm={12}
+              md={4}
+              sm={4}
               xs={12}
               display="flex"
               flexDirection="column"
@@ -281,7 +281,7 @@ const App: React.FC = () => {
           </Grid>
           <Grid container justifyContent="center">
             {result?.map((forecast) => (
-              <Grid item xl={1} lg={4} md={6} sm={12} xs={12} display="flex">
+              <Grid item xl={2} lg={2} md={2} sm={2} xs={4}>
                 <div>
                   <div className="nextDaysIcon">
                     {getImageIcon(forecast?.icon[0].icon)}
