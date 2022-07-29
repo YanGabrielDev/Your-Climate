@@ -6,7 +6,6 @@
 body{
   background-color: rgb(0, 30, 60);
   /* font-family: 'Raleway'; */
-color: white;
 }
 h2{
   font-size: 2rem;
@@ -35,7 +34,7 @@ h2{
   color: white;
 }
 .feelsLike{
-  color: white;
+  /* color: white; */
   margin-top: -3rem;
 }
 .termIcon{
@@ -43,12 +42,12 @@ h2{
 
 }
 .currentTemp{
-  color: white;
+  /* color: white; */
   font-size: 5em;
 }
 .cityName{
   font-family: 'Raleway';
-  color: white;
+  /* color: white; */
   font-size: 3rem;
 }
 .locationIcon{

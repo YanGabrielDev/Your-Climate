@@ -3,7 +3,7 @@ import "./App.css";
 import React, { useState, useEffect, ReactComponentElement } from "react";
 import Header from "./components/Header";
 import api from "./services/api";
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, Switch, TextField } from "@mui/material";
 import {
   Opacity,
   LocationOn,
@@ -11,6 +11,10 @@ import {
   ArrowUpward,
   ArrowDownward,
 } from "@mui/icons-material";
+import styled, { ThemeProvider } from "styled-components";
+import { lightTheme, darkTheme } from "./components/DarkMode/theme";
+import { Container } from "./components/DarkMode/styled";
+import { GlobaclStyled } from "./components/DarkMode/GlobalStyled";
 
 interface WeatherInterface {
   name: string;
@@ -43,6 +47,7 @@ interface WeatherDaysInterface {
 }
 
 const App: React.FC = () => {
+  const [theme, setTheme] = useState("light");
   const [location, setLocation] = useState<boolean>(false);
   const [weatherDays, setWeatherDays] = useState<WeatherDaysInterface>({
     list: [
@@ -85,13 +90,16 @@ const App: React.FC = () => {
       <div>
         <img
           src={`http://openweathermap.org/img/wn/${iconName}@2x.png`}
-          // width="100px"
-          // height="100px"
           alt=""
         />
       </div>
     );
   };
+
+  const themeToggler = () => {
+    theme === "light" ? setTheme("dark") : setTheme("light");
+  };
+
   const data = () => {
     let timestamp = weather.dt * 1000;
     let date = new Date(timestamp);
@@ -126,15 +134,23 @@ const App: React.FC = () => {
   };
 
   const getFullWeekName = (weekDay: number): string => {
-    const days = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
-    const day = days[weekDay]
+    const days = [
+      "Domingo",
+      "Segunda-feira",
+      "Terça-feira",
+      "Quarta-feira",
+      "Quinta-feira",
+      "Sexta-feira",
+      "Sábado",
+    ];
+    const day = days[weekDay];
     return day;
-  }
+  };
 
   const showWeekday = (): string => {
     const date = new Date();
-    return getFullWeekName(date.getDay())
-  }
+    return getFullWeekName(date.getDay());
+  };
 
   const getByName = async (event, cityname: string): Promise<any> => {
     event.preventDefault();
@@ -149,7 +165,6 @@ const App: React.FC = () => {
     );
 
     setWeather(resName.data);
-
     return resName;
   };
 
@@ -171,7 +186,6 @@ const App: React.FC = () => {
     const list: Array<any> = resNameNext.data.list;
 
     const dates: Array<any> = list.map((value, index) => {
-      console.log(value.weather);
       return {
         dt_txt: formatTimestamp(value.dt),
         temp: value.main.temp,
@@ -186,9 +200,9 @@ const App: React.FC = () => {
         unique[dates[i].dt_txt] = 1;
       }
     }
-    console.log(distinct);
     setResult(distinct);
     setWeatherDays(distinct);
+    console.log(resNameNext.data);
   };
 
   const cityChange = (e) => {
@@ -210,122 +224,120 @@ const App: React.FC = () => {
     return <h1> Você precisa ativar a permissão de localização!</h1>;
   } else {
     return (
-      <div className="App">
-        <Grid container={true}>
-          <Grid container={true}>
-            <Grid
-              item
-              xl={4}
-              lg={4}
-              md={4}
-              sm={4}
-              xs={12}
-              display="flex"
-              flexDirection="column"
-            >
-              <h1 className="cityName">
-                <LocationOn className="locationIcon" />
-                {weather.name}
-              </h1>
-              <h1>{showWeekday()}</h1>
-              {/* <h2>{data()}</h2> */}
-              <h1 className="currentTemp">
-                <DeviceThermostat className="termIcon" />
-                {Number(weather.main.temp).toFixed()}°
-              </h1>
-              <h2 className="feelsLike">
-                Sensação termica {Number(weather.main.feels_like).toFixed()}°
-              </h2>
-            </Grid>
-
-            <Grid
-              item
-              xl={4}
-              lg={4}
-              md={4}
-              sm={4}
-              xs={12}
-              display="flex"
-              flexDirection="column"
-            >
-              <h1>{getImageIcon(weather.weather["0"].icon)}</h1>
-              <h2 className="currentDescrip">
-                {weather.weather["0"].description}
-              </h2>
-            </Grid>
-
-            <Grid
-              item
-              xl={4}
-              lg={4}
-              md={4}
-              sm={4}
-              xs={12}
-              display="flex"
-              flexDirection="column"
-              marginTop="auto"
-            >
-              <h2>
-                <ArrowUpward /> {Number(weather.main.temp_max).toFixed()}°
-              </h2>
-              <h2>
-                <ArrowDownward /> {Number(weather.main.temp_min).toFixed()}°
-              </h2>
-              <h2>Pressão {weather.main.pressure} hpa</h2>
-              <div>
-                <h2>
-                  <Opacity /> {weather.main.humidity}%
-                </h2>
-              </div>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent="center">
-            {result?.map((forecast) => (
-              <Grid item xl={2} lg={2} md={2} sm={2} xs={4}>
-                <div>
-                  <div className="nextDaysIcon">
-                    {getImageIcon(forecast?.icon[0].icon)}
-                  </div>
-                  <h1>{forecast.temp}</h1>
-                  <h1>{forecast.dt_txt}</h1>
-                </div>
+      <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
+        <GlobaclStyled />
+        <Container>
+          <div className="App">
+            <Grid container={true} className="main-container">
+              <Grid flexDirection="row-reverse">
+                <Grid item spacing={2}>
+                  <Switch onClick={() => themeToggler()} />
+                  <TextField
+                    onChange={cityChange}
+                    value={cityName}
+                    id="outlined-basic"
+                    label="Cidade"
+                    variant="outlined"
+                  />{" "}
+                </Grid>
+                <Grid item spacing={2} margin={2}>
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      getByNext(cityName);
+                      getByName(e, cityName);
+                    }}
+                    variant="outlined"
+                  >
+                    Buscar
+                  </Button>
+                </Grid>{" "}
               </Grid>
-            ))}
-          </Grid>
-        </Grid>
-        <Grid container justifyContent="center">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              getByNext(cityName);
-              getByName(e, cityName);
-            }}
-          >
-            <Grid item spacing={2}>
-              <TextField
-                onChange={cityChange}
-                value={cityName}
-                id="outlined-basic"
-                label="Cidade"
-                variant="outlined"
-              />{" "}
+              <Grid container={true}>
+                <Grid
+                  item
+                  xl={4}
+                  lg={4}
+                  md={4}
+                  sm={4}
+                  xs={12}
+                  display="flex"
+                  flexDirection="column"
+                >
+                  <h1 className="cityName">
+                    <LocationOn className="locationIcon" />
+                    {weather.name}
+                  </h1>
+                  <h1>{showWeekday()}</h1>
+                  {/* <h2>{data()}</h2> */}
+                  <h1 className="currentTemp">
+                    <DeviceThermostat className="termIcon" />
+                    {Number(weather.main.temp).toFixed()}°
+                  </h1>
+                  <h2 className="feelsLike">
+                    Sensação termica {Number(weather.main.feels_like).toFixed()}
+                    °
+                  </h2>
+                </Grid>
+
+                <Grid
+                  item
+                  xl={4}
+                  lg={4}
+                  md={4}
+                  sm={4}
+                  xs={12}
+                  display="flex"
+                  flexDirection="column"
+                >
+                  <h1>{getImageIcon(weather.weather["0"].icon)}</h1>
+                  <h2 className="currentDescrip">
+                    {weather.weather["0"].description}
+                  </h2>
+                </Grid>
+
+                <Grid
+                  item
+                  xl={4}
+                  lg={4}
+                  md={4}
+                  sm={4}
+                  xs={12}
+                  display="flex"
+                  flexDirection="column"
+                  marginTop="auto"
+                >
+                  <h2>
+                    <ArrowUpward /> {Number(weather.main.temp_max).toFixed()}°
+                  </h2>
+                  <h2>
+                    <ArrowDownward /> {Number(weather.main.temp_min).toFixed()}°
+                  </h2>
+                  <h2>Pressão {weather.main.pressure} hpa</h2>
+                  <div>
+                    <h2>
+                      <Opacity /> {weather.main.humidity}%
+                    </h2>
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container justifyContent="center">
+                {result?.map((forecast) => (
+                  <Grid item xl={2} lg={2} md={2} sm={2} xs={4}>
+                    <div>
+                      <div className="nextDaysIcon">
+                        {getImageIcon(forecast?.icon[0].icon)}
+                      </div>
+                      <h1>{Number(forecast.temp).toFixed()}°</h1>
+                      <h1>{forecast.dt_txt}</h1>
+                    </div>
+                  </Grid>
+                ))}
+              </Grid>
             </Grid>
-            <Grid item spacing={2} margin={2}>
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  getByNext(cityName);
-                  getByName(e, cityName);
-                }}
-                variant="outlined"
-              >
-                Buscar
-              </Button>
-            </Grid>
-            {/* <button>Pesquisar</button> */}
-          </form>
-        </Grid>
-      </div>
+          </div>
+        </Container>
+      </ThemeProvider>
     );
   }
 };
